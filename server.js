@@ -9,12 +9,16 @@ const Message = require('./models/message'); // Ensure this is correctly importe
 const app = express();
 
 // Use CORS with default settings
-app.use(cors());
-
+app.use(cors({
+     origin:'*',
+     methods:'*',
+     allowedHeaders:'*',
+     exposedHeaders:'*'
+}));  
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:4200',
+    origin: '*',
     methods: ['GET', 'POST']
   }
 });
