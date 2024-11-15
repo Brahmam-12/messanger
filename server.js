@@ -42,11 +42,9 @@ const dbConnection = async () => {
 // Socket.io setup
 // In your WebSocket setup on the server
 io.on('connection', (socket) => {
-    console.log('A user connected');
-  
+    console.log('User connected');
     socket.on('sendMessage', async (data) => {
-      console.log('Message received on server:', data);
-      // Avoid duplicate save
+
       const existingMessage = await Message.findOne({ sender: data.sender, receiver: data.receiver, message: data.message });
       if (!existingMessage) {
         const message = new Message(data);
@@ -54,11 +52,25 @@ io.on('connection', (socket) => {
         io.emit('message', data); // Broadcast to all connected clients
       }
     });
-  
-    socket.on('disconnect', () => {
-      console.log('User disconnected');
+    
+    socket.on('join', (data) => {
+      console.log('User joined:', data);
     });
+
+    socket.on('leave', (data) => {
+      console.log('User left:', data);
+    });
+
+    socket.on('typing', (data) => {
+      socket.broadcast.emit('typing', data);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+
   });
+  
   
 
 // Use chat routes
